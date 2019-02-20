@@ -46,6 +46,8 @@ public class GUIController {
     public TextField spotifyClientId;
     @FXML
     public TextField spotifyClientSecret;
+    @FXML
+    public Tab settingsTab;
     @Setter
     private HostServices hostServices;
 
@@ -86,6 +88,11 @@ public class GUIController {
     @FXML
     public void visitYTDL(ActionEvent actionEvent) {
         hostServices.showDocument("https://rg3.github.io/youtube-dl/");
+    }
+
+    @FXML
+    public void visitFFMPEG(ActionEvent actionEvent) {
+        hostServices.showDocument("https://ffmpeg.zeranoe.com/builds/");
     }
 
     @FXML
@@ -157,6 +164,7 @@ public class GUIController {
         downloadFolder.setDisable(s);
         startProcessButton.setDisable(s);
         skipDownloadCheckbox.setDisable(s);
+        settingsTab.setDisable(s);
     }
 
     public void startProcess(ActionEvent actionEvent) {

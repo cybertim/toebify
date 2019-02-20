@@ -54,3 +54,4 @@ hs_err_pid*
 .idea
 target
 *.iml
+shade
