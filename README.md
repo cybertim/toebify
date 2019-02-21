@@ -1,6 +1,7 @@
 # Toebify
 ![Screenshot of the Mac client](screen.png)
-
+### Download
+You will find pre-build binaries at the [Release page](https://github.com/cybertim/toebify/releases).
 ### About
 Process a playlist into mp3's downloaded from youtube videos - because sometimes you need the audio offline (like android wear...)
 ### Setup
