@@ -95,10 +95,6 @@ public class GUIController {
         hostServices.showDocument("https://ffmpeg.zeranoe.com/builds/");
     }
 
-    @FXML
-    public void browseFolder(ActionEvent actionEvent) {
-    }
-
     private void process() {
         downloadIndicator.setProgress(0d);
         Service.getInstance().ytIndex = ytIndexSpinner.getValue();
@@ -109,8 +105,6 @@ public class GUIController {
                 try {
                     List<Track> tracks = Service.getInstance().spotifyListFromPlaylistID(playlistID.getText(), ytSearchConcat.getText(), downloadFolder, progressIndicator);
                     trackTable.setItems(FXCollections.observableList(tracks));
-                    trackTable.refresh();
-                    var failed = 0;
                     if (!skipDownloadCheckbox.isSelected()) {
                         Service.getInstance().folderName = downloadFolder.getText().replace(File.separator, "");
                         var counter = 0;
@@ -120,29 +114,30 @@ public class GUIController {
                                 Service.getInstance().duration(track);
                             } else {
                                 track.setStatus(-1);
-                                failed++;
                             }
                             counter++;
                             var i = (1d / (double) tracks.size());
-                            var j = i * counter;
-                            downloadIndicator.setProgress(j);
-                            trackTable.refresh();
+                            downloadIndicator.setProgress(i * counter);
                         }
                         if (createM3UCheckBox.isSelected()) {
                             Service.getInstance().createM3U(tracks);
                         }
                     }
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Done");
-                    alert.setHeaderText(tracks.size() + " track(s) found");
-                    alert.setContentText(failed + " track(s) failed to download");
-                    alert.showAndWait();
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Done");
+                        alert.setHeaderText(tracks.size() + " track(s) found");
+                        alert.setContentText(tracks.stream().filter(t -> t.getStatus() == -1).count() + " track(s) failed to download");
+                        alert.showAndWait();
+                    });
                 } catch (IOException | SpotifyWebApiException e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error Occurred");
-                    alert.setHeaderText("Check your clientId, playlistId or Internet connection.");
-                    alert.setContentText("Details: " + e.getMessage());
-                    alert.showAndWait();
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error Occurred");
+                        alert.setHeaderText("Check your clientId, playlistId or Internet connection.");
+                        alert.setContentText("Details: " + e.getMessage());
+                        alert.showAndWait();
+                    });
                 } finally {
                     return null;
                 }

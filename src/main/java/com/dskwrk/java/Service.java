@@ -35,12 +35,12 @@ public class Service {
     // Settings
     public String getClientId() {
         var pref = Preferences.userNodeForPackage(Service.class);
-        return pref.get("clientId", "a713a42860b44f7faa4598cb2b173f0e");
+        return pref.get("clientId", "");
     }
 
     public String getClientSecret() {
         var pref = Preferences.userNodeForPackage(Service.class);
-        return pref.get("clientSecret", "f1ccd482dd944cecb8b061044937eedd");
+        return pref.get("clientSecret", "");
     }
 
     public void setClient(String id, String secret) {
@@ -133,7 +133,13 @@ public class Service {
         Document doc = Jsoup.connect("https://www.youtube.com/results?search_query=" + URLEncoder.encode(artist + " " + name + " " + extra, "UTF-8")).get();
         Elements links = doc.select("a[href].yt-uix-tile-link");
         for (var link : links) {
-            if (link.attr("href").startsWith("/watch")) track.getYtLinks().add(link.attr("href"));
+            if (link.attr("href").startsWith("/watch")) {
+                var href = link.attr("href");
+                if (href.contains("&")) { // prevent playlists from downloading
+                    href = href.split("&")[0];
+                }
+                track.getYtLinks().add(href);
+            }
         }
         return track;
     }
